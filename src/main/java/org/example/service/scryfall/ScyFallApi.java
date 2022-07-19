@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.example.model.scryfall.ScryFallMtgCardResponse;
+import org.example.model.scryfall.ScryFallMtgSet;
 import org.example.model.scryfall.ScryFallMtgSetResponse;
 
 import java.io.IOException;
@@ -17,13 +19,28 @@ public class ScyFallApi {
 
     public ScryFallMtgSetResponse getSets() {
         String url = "https://api.scryfall.com/sets";
-        ObjectMapper mapper = new ObjectMapper();
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 
             HttpGet request = new HttpGet(url);
 
             ScryFallMtgSetResponse response = client.execute(request, httpResponse ->
                     mapper.readValue(httpResponse.getEntity().getContent(), ScryFallMtgSetResponse.class));
+
+            System.out.println(response.getData());
+            return response;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ScryFallMtgCardResponse getCardsFromSet(ScryFallMtgSet set) {
+        if(set == null) throw new NullPointerException("Set must not be null to retrieve cards.");
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+
+            HttpGet request = new HttpGet(set.getSearchUri());
+
+            ScryFallMtgCardResponse response = client.execute(request, httpResponse ->
+                    mapper.readValue(httpResponse.getEntity().getContent(), ScryFallMtgCardResponse.class));
 
             System.out.println(response.getData());
             return response;

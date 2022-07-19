@@ -15,4 +15,6 @@ public class ScryFallMtgSet {
     private int cardCount;
     @JsonProperty(value = "released_at")
     private Date releaseDate;
+    @JsonProperty(value = "search_uri")
+    private String searchUri;
 }
